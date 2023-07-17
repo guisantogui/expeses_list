@@ -4,7 +4,9 @@ import 'package:flutter/widgets.dart';
 import '../models/expense.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense({super.key, required this.onExpenseAdded});
+
+  final Function onExpenseAdded;
 
   @override
   State<StatefulWidget> createState() {
@@ -19,8 +21,37 @@ class _NewExpenseState extends State<NewExpense> {
   Category _selectedCategory = Category.leasure;
 
   void _onFormSubmitted() {
-    print(
-        "currentTitleInputted ${_titleController.text} amount ${_amoutController.text}");
+    var title = _titleController.text;
+    var amount = double.tryParse(_amoutController.text);
+    var amountIsValid = amount != null && amount > 0;
+
+    if (title.isNotEmpty && amountIsValid && _selectedDate != null) {
+      widget.onExpenseAdded(Expense(
+        title: title,
+        amount: amount,
+        date: _selectedDate!,
+        category: _selectedCategory,
+      ));
+
+      Navigator.pop(context);
+    } else {
+      ///POPUP ERROR MESSAGE
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Error Fill the form"),
+          content: const Text("Please Fill the form"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: const Text("OK"))
+          ],
+        ),
+      );
+      return;
+    }
   }
 
   void _onFormCancelled() {
@@ -54,7 +85,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(children: [
         TextField(
           controller: _titleController,
