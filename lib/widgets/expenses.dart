@@ -33,20 +33,55 @@ class _ExpensesState extends State<Expenses> {
         builder: (ctx) => NewExpense(onExpenseAdded: addExpense));
   }
 
-  void addExpense(Expense expense) {
+  void setAddExpenseState(Expense expense, {int index = -1}) {
     setState(() {
-      _registeredExpenses.add(expense);
+      if (index < 0) {
+        _registeredExpenses.add(expense);
+      } else {
+        _registeredExpenses.insert(index, expense);
+      }
     });
   }
 
-  void removeExpense(index) {
+  void setRemoveExpenseState(Expense expense) {
     setState(() {
-      _registeredExpenses.removeAt(index);
+      _registeredExpenses.remove(expense);
     });
+  }
+
+  void addExpense(Expense expense, {int index = -1}) {
+    setAddExpenseState(expense, index: index);
+  }
+
+  void removeExpense(Expense expense) {
+    var index = _registeredExpenses.indexOf(expense);
+    setRemoveExpenseState(expense);
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 5),
+      content: const Text("Item deleted"),
+      action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            addExpense(expense, index: index);
+          }),
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget mainContent = const Center(
+      child: Text("There is no Expenses, start spending money"),
+    );
+
+    if (_registeredExpenses.isNotEmpty) {
+      mainContent = ExpensesList(
+        expenses: _registeredExpenses,
+        onItemRemoved: removeExpense,
+      );
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("Expense Tracker"),
@@ -59,12 +94,7 @@ class _ExpensesState extends State<Expenses> {
         ),
         body: Column(
           children: [
-            Expanded(
-              child: ExpensesList(
-                expenses: _registeredExpenses,
-                onItemRemoved: removeExpense,
-              ),
-            ),
+            Expanded(child: mainContent),
           ],
         ));
   }

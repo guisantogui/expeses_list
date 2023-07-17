@@ -18,7 +18,7 @@ class ExpensesList extends StatelessWidget {
         key: ValueKey(expenses[index]),
         child: ExpenseItem(expenses[index]),
         onDismissed: (direction) {
-          onItemRemoved(index);
+          onItemRemoved(expenses[index]);
         },
       ),
     );
