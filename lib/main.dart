@@ -9,17 +9,37 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   var kColorScheme =
-      ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 66, 141, 90));
+      ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 116, 188, 105));
+
+  var kDarkColorScheme = ColorScheme.fromSeed(
+    brightness: Brightness.dark,
+    seedColor: Color.fromARGB(255, 56, 131, 82),
+  );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      darkTheme: ThemeData.dark().copyWith(
+        useMaterial3: true,
+        colorScheme: kDarkColorScheme,
+        cardTheme: CardTheme().copyWith(
+          color: kDarkColorScheme.secondaryContainer,
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: kColorScheme.primaryContainer,
+            foregroundColor: kColorScheme.onPrimaryContainer,
+            textStyle: const TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
       theme: ThemeData().copyWith(
         useMaterial3: true,
         colorScheme: kColorScheme,
         appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: kColorScheme.onPrimaryContainer,
-          foregroundColor: kColorScheme.primaryContainer,
+          backgroundColor: kColorScheme.primaryContainer,
+          foregroundColor: kColorScheme.onPrimaryContainer,
         ),
         cardTheme: CardTheme().copyWith(
           color: kColorScheme.secondary,
@@ -28,7 +48,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: kColorScheme.tertiary,
+            backgroundColor: kColorScheme.tertiaryContainer,
             textStyle: const TextStyle(color: Colors.white),
           ),
         ),
@@ -40,6 +60,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
       ),
+      themeMode: ThemeMode.system, //default
       home: const Expenses(),
     );
   }
